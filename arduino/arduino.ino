@@ -32,10 +32,12 @@ void setup() {
     lcd.backlight();
     lcd.setCursor(0,0);
     DebugPrintf("\n\nConnecting to %s\n", ssid);
-    LineSafePrintSplitText(lcd, "Connecting to ", x, y);
-    y++;
+    LineSafePrint(lcd, "Connecting to ", x, y);
+    x = 0;
+    y = 1;
     LineSafePrint(lcd, ssid, x, y);
-    y++;
+    x = 0;
+    y = 2;
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) 
     {
@@ -87,6 +89,15 @@ void loop()
             GetConfig(client, mainNode, host, lcd);
             nextGet = millis() + 2500;
             DisplayCurrentLineStates(lcd, mainNode);
+            if(mainNode.id == NULL)
+            {
+                unsigned int x = 0; 
+                unsigned int y = 1;
+                static char buf[64];
+                sprintf(buf, "MAC: %s", WiFi.macAddress().c_str());
+                LineSafePrintSplitText(lcd, buf, x, y);
+                nextGet += 7500; // give time to read address
+            }
         }
     }
     else if (state == STATE_INPUT_DEST)
@@ -135,7 +146,14 @@ void loop()
     }
     else if(state == STATE_SUBMIT)
     {
-        AddTrainToLine(client, host, mainNode, destId, trainId, lcd);
+        if(destId[1] == 0)
+        {
+            AddTrainToLine(client, host, mainNode, "remove_train", trainId, lcd);
+        }
+        else
+        {
+            AddTrainToLine(client, host, mainNode, destId, trainId, lcd);
+        }
         state = STATE_DISPLAY;
     }
     lastState = state;

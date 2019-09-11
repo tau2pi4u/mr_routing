@@ -22,7 +22,7 @@ void LineSafePrint(LiquidCrystal_I2C & lcd, const char * text, unsigned int & x,
     }    
 }
 
-void LineSafePrint(LiquidCrystal_I2C & lcd, const char * text, const char * altText, unsigned int & x, unsigned int & y)
+void LineSafePrint(LiquidCrystal_I2C & lcd, const char * text, const char * altText, unsigned int & x, unsigned int & y, bool altNewLine)
 {
     unsigned int textLen = strlen(text);
     if(x + textLen <= LCD_WIDTH)
@@ -33,6 +33,15 @@ void LineSafePrint(LiquidCrystal_I2C & lcd, const char * text, const char * altT
     }
     else
     {
+        if(altNewLine)
+        {
+            y++;
+            x = 0;
+            if(y >= LCD_HEIGHT)
+            {
+                return;
+            }
+        }
         unsigned int altTextLen = strlen(altText);
         if(x + altTextLen <= LCD_WIDTH)
         {
@@ -127,7 +136,7 @@ void DisplayCurrentLineStates(LiquidCrystal_I2C & lcd, MainNode & mainNode)
     {
         if(!first)
         {
-            LineSafePrint(lcd, ", ", ",", cursorX, cursorY);
+            LineSafePrint(lcd, ", ", ",", cursorX, cursorY, false);
         }
         else
         {
@@ -142,7 +151,7 @@ void DisplayCurrentLineStates(LiquidCrystal_I2C & lcd, MainNode & mainNode)
     {
         if(!first)
         {
-            LineSafePrint(lcd, ", ", ",", cursorX, cursorY);
+            LineSafePrint(lcd, ", ", ",", cursorX, cursorY, false);
         }
         else
         {
