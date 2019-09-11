@@ -27,7 +27,7 @@ bool EstablishHTTPConnection(WiFiClient & client, HTTPClient & http, const char 
     return true;
 }
 
-bool SendPUTRequest(HTTPClient & http, const String & request)
+bool SendPUTRequest(HTTPClient & http, const String & request, LiquidCrystal_I2C & lcd)
 {
     http.addHeader("Content-Type", "application/json");
     DebugPrintf("Request: %s\n", request.c_str());
@@ -37,7 +37,23 @@ bool SendPUTRequest(HTTPClient & http, const String & request)
         DebugPrint("Response code: ");
         DebugPrintln(String(responseCode));
         DebugPrint("Response: ");
-        DebugPrintln(http.getString());
+        String response = http.getString();
+        DebugPrintln(response);
+        if(IsError(response))
+        {
+            static char buf[64];
+            for(unsigned int i = 0; i < response.length(); i++)
+            {
+                buf[i] = response[i];
+            }
+            buf[response.length()] = 0;
+            DebugPrintf("Buf: %s\n", buf);
+            const char * error = GetErrorMessageFromReturnString(buf);
+            DebugPrint("Response is now: ");
+            DebugPrintln(response);
+            DebugPrintf("Error: %s\n", error);
+            DisplayErrorMessage(lcd, error);
+        }
         return true;
     }
     else
@@ -49,20 +65,28 @@ bool SendPUTRequest(HTTPClient & http, const String & request)
     }
 }
 
-void GetConfig(WiFiClient & client, MainNode & mainNode, const char * host)
+void GetConfig(WiFiClient & client, MainNode & mainNode, const char * host, LiquidCrystal_I2C & lcd)
 {
-    if(!EstablishClientConnection(client, host)){ return; }
+    if(!EstablishClientConnection(client, host))
+    { 
+        DisplayErrorMessage(lcd, "Could not connect to server");
+        return; 
+    }
     HTTPClient http;
     String uri = "/api/node/new_node";
-    if(!EstablishHTTPConnection(client, http, host, uri)){ return; }    
+    if(!EstablishHTTPConnection(client, http, host, uri))
+    { 
+        DisplayErrorMessage(lcd, "Could establish HTTP connection");
+        return; 
+    }    
     String request = "{\"mac_address\" : \"" + WiFi.macAddress() + "\"}";
-    if(!SendPUTRequest(http, request)){ return; }   
+    if(!SendPUTRequest(http, request, lcd)){ return; }   
     GetMainNodeFromConfig(mainNode, http.getString());
     http.end();
     client.stop();
 }
 
-void AddTrainToLine(WiFiClient & client, const char * host, MainNode & mainNode, const char * nodeId, const char * trainId)
+void AddTrainToLine(WiFiClient & client, const char * host, MainNode & mainNode, const char * nodeId, const char * trainId, LiquidCrystal_I2C & lcd)
 {
     if(!EstablishClientConnection(client, host)){ return; }
     HTTPClient http;
@@ -71,8 +95,9 @@ void AddTrainToLine(WiFiClient & client, const char * host, MainNode & mainNode,
     if(!EstablishHTTPConnection(client, http, host, uri)){ return; }    
     String request = "{\"sender_id\" : \"" + String(mainNode.id) + 
                      "\", \"train_id\" : \"" + String(trainId) + "\"}";
-    if(!SendPUTRequest(http, request)){ return; }   
+    if(!SendPUTRequest(http, request, lcd)){ return; }   
     DebugPrint(http.getString());
     http.end();
     client.stop();
+    GetConfig(client, mainNode, host, lcd);
 }

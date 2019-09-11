@@ -19,4 +19,8 @@ f"""#pragma once
 #define SERVER_IP \"{networkCfg['server_ip']}\"""")
 file.close()
 
+if not os.path.isdir('../build/'):
+    os.mkdir('../build')
+if not os.path.isdir('../build/sketch'):
+    os.mkdir('../build/sketch')
 shutil.copyfile("../gen/gen.hpp", "../build/sketch/gen.hpp")

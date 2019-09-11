@@ -1,15 +1,23 @@
 #include "error.hpp"
 
-bool IsError(const String & errorStr)
+bool IsEmpty(String errorStr)
 {
     errorStr.trim();
-    return errorStr.StartsWith("{\"error\":");
+    return errorStr == "{}";
+}
+
+bool IsError(String errorStr)
+{
+    errorStr.trim();
+    return errorStr.startsWith("{\"error\":");
 }
 
 const char * GetErrorMessageFromReturnString(const char * error)
 {
     unsigned int errorCode = -1;
-    sscanf(error, "{\"error\": \"%u\"}", &errorCode);
+    DebugPrintf("Error input: %s\n", error);
+    sscanf(error, "{\"error\": %u}", &errorCode);
+    DebugPrintf("Deduced error code: %u\n", errorCode);
     return GetErrorMessage(errorCode);
 }
 
@@ -18,11 +26,10 @@ const char * GetErrorMessage(unsigned int errorCode)
     static char buf[64];
     if(errorCode < ERROR_COUNT)
     {
-        strcpy_P(buf, (char*)pgm_read_word(&ERROR_MESSAGE_TEXT[errorCode]));
+        return ERROR_MESSAGE_TEXT[errorCode];
     }
     else
     {
-       strcpy_P(buf, (char*)pgm_read_word(&ERROR_MESSAGE_TEXT[ERROR_COUNT-1]));
+       return ERROR_MESSAGE_TEXT[ERROR_COUNT-1];
     }
-    return buf;
 }

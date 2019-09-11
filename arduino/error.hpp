@@ -5,18 +5,19 @@
 static const int ERROR_COUNT = 10;
 static const int EMPTY_RESPONSE_INDEX = 4;
 
-static const char * ERROR_0 PROGMEM = {0};
-static const char * ERROR_1 PROGMEM = "Line busy";
-static const char * ERROR_2 PROGMEM = "Unknown node";
-static const char * ERROR_3 PROGMEM = "Unimplemented";
-static const char * ERROR_4 PROGMEM = "Empty response";
-static const char * ERROR_5 PROGMEM = "No sender id";
-static const char * ERROR_6 PROGMEM = "No train id";
-static const char * ERROR_7 PROGMEM = "Node does not exist";
-static const char * ERROR_8 PROGMEM = "No such connection exists";
-static const char * ERROR_9 PROGMEM = "Unknown error";
+// Needs to fit into a buffer of 64 chars
+static const char * ERROR_0 = {0};
+static const char * ERROR_1 = "Line busy";
+static const char * ERROR_2 = "Unknown node";
+static const char * ERROR_3 = "Unimplemented";
+static const char * ERROR_4 = "Empty response";
+static const char * ERROR_5 = "No sender id";
+static const char * ERROR_6 = "No train id";
+static const char * ERROR_7 = "Node does not exist";
+static const char * ERROR_8 = "No such connection exists";
+static const char * ERROR_9 = "Unknown error";
 
-static const char * ERROR_MESSAGE_TEXT [ERROR_COUNT] PROGMEM =
+static const char * ERROR_MESSAGE_TEXT [ERROR_COUNT] =
 {
     ERROR_0,
     ERROR_1,
@@ -30,7 +31,7 @@ static const char * ERROR_MESSAGE_TEXT [ERROR_COUNT] PROGMEM =
     ERROR_9  
 };
 
-bool IsEmpty(const String & errorStr);
-bool IsError(const String & errorStr);
+bool IsEmpty(String errorStr);
+bool IsError(String errorStr);
 const char * GetErrorMessageFromReturnString(const char * error);
 const char * GetErrorMessage(unsigned int errorCode);
