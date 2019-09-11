@@ -3,7 +3,7 @@
 void LineSafePrint(LiquidCrystal_I2C & lcd, const char * text, unsigned int & x, unsigned int & y)
 {
     unsigned int textLen = strlen(text);
-    if(x + textLen < LCD_WIDTH)
+    if(x + textLen <= LCD_WIDTH)
     {
         lcd.setCursor(x, y);
         lcd.print(text);
@@ -22,10 +22,10 @@ void LineSafePrint(LiquidCrystal_I2C & lcd, const char * text, unsigned int & x,
     }    
 }
 
-void LineSafePrint(LiquidCrystal_I2C & lcd, const char * text, const char * altText, unsigned int & x, unsigned int y)
+void LineSafePrint(LiquidCrystal_I2C & lcd, const char * text, const char * altText, unsigned int & x, unsigned int & y)
 {
     unsigned int textLen = strlen(text);
-    if(x + textLen < LCD_WIDTH)
+    if(x + textLen <= LCD_WIDTH)
     {
         lcd.setCursor(x, y);
         lcd.print(text);
@@ -34,7 +34,7 @@ void LineSafePrint(LiquidCrystal_I2C & lcd, const char * text, const char * altT
     else
     {
         unsigned int altTextLen = strlen(altText);
-        if(x + altTextLen < LCD_WIDTH)
+        if(x + altTextLen <= LCD_WIDTH)
         {
             lcd.setCursor(x, y);
             lcd.print(altText);

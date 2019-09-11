@@ -53,6 +53,7 @@ bool SendPUTRequest(HTTPClient & http, const String & request, LiquidCrystal_I2C
             DebugPrintln(response);
             DebugPrintf("Error: %s\n", error);
             DisplayErrorMessage(lcd, error);
+            return false;
         }
         return true;
     }
