@@ -52,7 +52,9 @@ class node_end(Resource):
             else:
                 return {'error' : 7}
         elif node_id == 'remove_train':
-            return {'error' : 3}
+            src = args['sender_id']
+            self.db = ClearLines(self.db, args, src)
+            return {}
         else:
             error = ValidateArgsForTrainRequest(self.db, args, node_id)
             if('error' in error.keys()):
