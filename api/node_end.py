@@ -50,7 +50,7 @@ class node_end(Resource):
                 node_id = self.db['address_map'][args['mac_address']]
                 return self.db['nodes'][node_id]
             else:
-                return {'error' : f'address {args["mac_address"]} is not in the database'}
+                return {'error' : 7}
         elif node_id == 'remove_train':
             return {'error' : 3}
         else:
