@@ -55,15 +55,13 @@ char ScanKeyboard(char * inputPins, char * outputPins)
 char ReadKeyboard(char * inputPins, char * outputPins)
 {
     static char lastKey = '\0';
-    static char lastRegisteredKey = '\0';
     static unsigned long long nextKeyAllowed = 0;
     char key = ScanKeyboard(inputPins, outputPins);
     if(key != lastKey && key != 0 && 
-        (millis() > nextKeyAllowed || key != lastRegisteredKey))
+        millis() > nextKeyAllowed)
     {
         DebugPrintf("Detected key %c\n", key);
         nextKeyAllowed = millis() + 500;
-        lastRegisteredKey = key;
         lastKey = key;
         return key;
     }
