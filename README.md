@@ -31,6 +31,7 @@ There are quite a few steps. Please follow this guide carefully, it'll save time
 * Make a note of the local ip address of your server. This can be found by typing `ifconfig`  
 
 ### Arduino
+#### Do this once:
 * `cd ../`
 * Create a file called `network.json` which contains:
 ```json
@@ -53,4 +54,29 @@ There are quite a few steps. Please follow this guide carefully, it'll save time
 * `cp ../gen/gen.hpp gen.hpp`
 * Open `arduino.ino` in the arduino IDE.
 * Make sure the settings for upload are correct according to the guide from earlier.
+#### Do this for each arduino
 * Upload the sketch to the arduino. 
+* Note the mac address shown on the screen
+
+### Updating the config
+* Go back to `config.json`
+* In address map, add pairs of mac addresses and names. Names should be in the form `A#` where # is a number up to 4 digits. 
+* This might look something like: 
+```json
+"address_map" : {
+        "CC:50:E3:CD:A7:47" : "A0",
+        "CC:50:E3:CD:A7:52" : "A1"
+        },
+```
+* Build the connections using the `connections` dictionary. These connections can either be `both`, meaning it is assumed that trains can go both ways, or `one-way`, meaning that trains can only go from the first named node to the second named node.
+* This might look something like:
+```json
+"connections":[
+        ["A0", "A1", "both"],
+        ["A1", "A2", "one-way"],
+        ["A2", "A0", "one-way"]
+]
+```
+* Start the server by going to the `api` folder and running `./api.sh`
+* The arduinos should find the server and display their configurations (wait 10 seconds for them to repeat the check).
+
