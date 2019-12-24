@@ -32,6 +32,7 @@ class new_node_end(Resource):
     
     def put(self):
         args = self.put_parse.parse_args()
+        assert(False)
 
 class node_end(Resource):
     def __init__(self, db):
