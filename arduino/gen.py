@@ -13,10 +13,10 @@ if not os.path.isdir("../gen"):
     os.mkdir("../gen")
 file = open("../gen/gen.hpp", "w")
 file.write(
-f"""#pragma once
-#define NETWORK \"{networkCfg['network']}\"
-#define PASSWORD \"{networkCfg['password']}\"
-#define SERVER_IP \"{networkCfg['server_ip']}\"""")
+"""#pragma once
+#define NETWORK \"{0}\"
+#define PASSWORD \"{1}\"
+#define SERVER_IP \"{2}\"""".format(networkCfg['network'], networkCfg['password'], networkCfg['server_ip']))
 file.close()
 
 if not os.path.isdir('../build/'):

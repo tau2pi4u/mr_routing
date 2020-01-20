@@ -9,14 +9,13 @@ There are quite a few steps. Please follow this guide carefully, it'll save time
 * Follow this guide **carefully** for each LOL1n board. Make sure the test program works. https://www.instructables.com/id/Getting-Started-With-ESP8266LiLon-NodeMCU-V3Flashi/
 * Install the library LiquidCrystal I2C **by Frank de Brabander**. There are multiple libraries with the same name, it's important that the correct one is installed.
 ### Raspberry Pi
-* Install Python 3.6
+* Install Python 3
     * To check your python version, type: `python -V`.
     * If this says 2.7, try typing `python3 -V`.
-    * If this is 3.6 or higher, it's fine and you should replace `python3.6` in future commands with `python3`.
-    * If not, then install python 3.6, following the guide here: http://www.knight-of-pi.org/installing-python3-6-on-a-raspberry-pi/
+    * It should work with all versions of python3, but 3.5 is the minimum it has been tested with.
     * Earlier versions may work but are not directly supported.
-* `sudo python3.6 -m pip install flask flask_restful`
-* OR `python3.6 -m pip install --user flask flask_restful`
+* `sudo python3 -m pip install flask flask_restful`
+* OR `python3 -m pip install --user flask flask_restful` (if you want to avoid using sudo)
 * `git clone https://github.com/tau2pi4u/mr_routing.git`
 * `cd mr_routing/api`
 * `chmod +x api.sh`
