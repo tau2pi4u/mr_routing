@@ -1,24 +1,33 @@
 # mr_routing
+
 ## Setup
 To perform this setup, you will need:
 * A raspberry pi with an internet connection
 * A router with a 2.4GHz wireless network.
 * Some LOL1n Arduino boards, ready for programming.
 There are quite a few steps. Please follow this guide carefully, it'll save time in the long run.
+
 ### Preparing the LOL1n boards and libraries
-* Follow this guide **carefully** for each LOL1n board. Make sure the test program works. https://www.instructables.com/id/Getting-Started-With-ESP8266LiLon-NodeMCU-V3Flashi/
-* Install the library LiquidCrystal I2C **by Frank de Brabander**. There are multiple libraries with the same name, it's important that the correct one is installed.
+* Follow step 1 of this guide **carefully** for each LOL1n board.
+* If you're having issues, make sure the test program works. 
+* https://www.instructables.com/id/Getting-Started-With-ESP8266LiLon-NodeMCU-V3Flashi/
+
 ### Raspberry Pi
+#### Python setup
 * Install Python 3
-    * To check your python version, type: `python -V`.
-    * If this says 2.7, try typing `python3 -V`.
-    * It should work with all versions of python3, but 3.5 is the minimum it has been tested with.
-    * Earlier versions may work but are not directly supported.
+  * To check your python version, type: `python -V`.
+  * If this says 2.7, try typing `python3 -V`.
+  * It should work with all versions of python3, but 3.5 is the minimum it has been tested with.
+  * Earlier versions may work but are not directly supported.
 * `sudo python3 -m pip install flask flask_restful`
-* OR `python3 -m pip install --user flask flask_restful` (if you want to avoid using sudo)
+  * If it says pip is not installed, run:
+  * `wget https://bootstrap.pypa.io/get-pip.py`
+  * `sudo python3 get-pip.py`
+* then repeat the above steps
+
+#### Getting the Repo
 * `git clone https://github.com/tau2pi4u/mr_routing.git`
 * `cd mr_routing/api`
-* `chmod +x api.sh`
 * Make a file called `config.json` which contains:
 ```json
 {
@@ -32,7 +41,7 @@ There are quite a few steps. Please follow this guide carefully, it'll save time
 ```
 * `./api.sh`
 * If everything has worked, you should have a server running. Press CTRL+C to quit.
-* Make a note of the local ip address of your server. This can be found by typing `ifconfig`  
+* Make a note of the local ip address of your server. This can be found by typing `ifconfig` and should look like `192.168.0.X`.
 
 ### Arduino
 #### Do this once:
@@ -53,13 +62,15 @@ There are quite a few steps. Please follow this guide carefully, it'll save time
     "server_ip" : "192.168.0.10"
 }
 ```
-* `cd arduino`
-* `python3.6 gen.py`
-* `cp ../gen/gen.hpp gen.hpp`
-* Open `arduino.ino` in the arduino IDE.
-* Make sure the settings for upload are correct according to the guide from earlier.
+* `make compile`
+
 #### Do this for each arduino
-* Upload the sketch to the arduino. 
+* `make upload`
+  * If it can't find the board, type
+  * `make listports`
+  * and try
+  * `make upload PORT=/dev/ttyUSB0` 
+  * but replace `/dev/ttyUSB0` with the other listed ports
 * Note the mac address shown on the screen
 
 ### Updating the config
