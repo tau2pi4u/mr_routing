@@ -1,20 +1,36 @@
 # Makefile for mr_routing
 
+# Port vars
+PORT=/dev/ttyUSB0
+
+# CLI vars
 CLI=bin/arduino-cli
 CLI_CFG=~/.arduino15/arduino-cli.yaml
 CLI_PKG=~/.arduino15/package_index.json
+
+# Lib vars
 LIB=~/Arduino/libraries/LiquidCrystal_I2C
 LIBH=$(LIB)/LiquidCrystal_I2C.h
 
-all : cli build
+# Ino vars
+INO_DIR=build/sketch
+INO=$(INO_DIR)/sketch.ino
 
-build : gen copy compile
+# Bin
+BIN=$(INO_DIR)/sketch.esp8266.esp8266.nodemcuv2.bin
+
+# Gen vars
+GEN=$(INO_DIR)/gen.hpp
+
+all : cli upload
+
+build : $(GEN) $(COPY) $(BIN)
 
 # Install the arduino-cli
 
 .PHONY : cli
 
-cli : bin/arduino-cli esp8266 $(LIBH)
+cli : $(CLI) esp8266 $(LIBH)
 
 bin/arduino-cli : 
 	curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
@@ -31,24 +47,38 @@ esp8266 : bin/arduino-cli $(CLI_CFG) $(CLI_PKG)
 	$(CLI) core install --additional-urls http://arduino.esp8266.com/stable/package_esp8266com_index.json esp8266:esp8266
 
 
-$(LIBH) : gen bin/arduino-cli
+$(LIBH) : $(CLI)
 	git clone https://github.com/fdebrabander/Arduino-LiquidCrystal-I2C-library.git $(LIB)
 
 # Build commands
 
-.PHONY : gen 
-
-gen : network.json
+$(GEN) : network.json
 	cd arduino; python3 gen.py; cd ..
 
-.PHONY : copy
-
-copy : gen
+$(INO) : $(GEN)
 	cp arduino/*.?pp build/sketch/; \
-	cp arduino/arduino.ino build/sketch/arduino.ino
+	cp arduino/arduino.ino $(INO)
 
-compile : gen copy
-	$(CLI) compile --fqbn esp8266:esp8266:nodemcuv2 build/sketch/arduino.ino
+$(BIN) : $(GEN) $(INO)
+	$(CLI) compile --fqbn esp8266:esp8266:nodemcuv2 $(INO_DIR)
+
+.PHONY : compile
+
+compile : $(GEN) $(INO) $(BIN)
+
+
+# Upload commands
+
+.PHONY : listports
+
+listports : $(CLI)
+	$(CLI) board list
+
+.PHONY : upload
+
+upload : $(BIN) $(CLI)
+	$(CLI) upload -p $(PORT) --fqbn esp8266:esp8266:nodemcuv2:baud=115200 $(INO_DIR)
+
 
 # Clean commands
 
@@ -56,9 +86,10 @@ clean :
 	rm -rf build/ gen/
 
 check_reset:
-	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
+	@echo -n "Are you sure? This will delete the ~/Arduino/ folder and the ~/.arduino15/ folder! [y/N] " && read ans && [ $${ans:-N} = y ]
 
 .PHONY: clean check_clean
 
 reset : clean check_reset
 	rm -rf bin/ ~/.arduino15/ ~/Arduino/
+
