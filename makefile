@@ -77,7 +77,7 @@ listports : $(CLI)
 .PHONY : upload
 
 upload : $(BIN) $(CLI)
-	$(CLI) upload -p $(PORT) --fqbn esp8266:esp8266:nodemcuv2:baud=115200 $(INO_DIR)
+	$(CLI) upload -p $(PORT) --fqbn esp8266:esp8266:nodemcuv2:xtal=80,vt=flash,exception=disabled,ssl=all,eesz=4M,ip=lm2f,dbg=Disabled,lvl=None____,wipe=none,baud=115200 $(INO_DIR)
 
 
 # Clean commands
